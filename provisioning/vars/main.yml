@@ -1,0 +1,13 @@
+---
+app_repository: https://github.com/amok/devops-test-task
+frontend_repo_path: /opt/test-repo-frontend
+backend_repo_path: /opt/test-repo-backend
+app_path: /opt/test
+frontend_path: "{{ app_path }}/frontend"
+frontend_root_dir: "{{ app_path }}/frontend/build"
+backend_path: "{{ app_path }}/backend"
+frontend_uri: /app
+backend_uri: /api
+nginx_port: "80"
+
+
