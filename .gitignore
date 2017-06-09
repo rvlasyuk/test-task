@@ -1,4 +1,4 @@
-S.
+OS.
 .DS_Store
 
 # Vagrant.
@@ -6,4 +6,5 @@ S.
 
 # Ansible.
 *.retry
+*/fetched/*
 
