@@ -1,0 +1,11 @@
+{% for upstream in test_upstreams %}
+upstream {{ upstream.name }} {
+{% if upstream.strategy is defined %}
+    {{ upstream.strategy }};
+{% endif %}
+{% for server in upstream.servers %}
+    server {{ server }};
+{% endfor %}
+    server 127.0.0.1 down;
+}
+{% endfor %}

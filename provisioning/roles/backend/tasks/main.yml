@@ -1,0 +1,34 @@
+---
+- name: Get backend repo
+  git:
+    repo: "{{ app_repository }}"
+    dest: "{{ backend_repo_path }}"
+    version: master
+    accept_hostkey: yes
+  register: app_updated
+- pip:
+    requirements: ./requirements.txt
+    chdir: "{{ backend_repo_path }}/backend"
+
+- name: Stop running backend server
+  shell: kill -HUP $(pidof -x python2)
+  ignore_errors: true
+
+- name: Clean old backend build directory
+  file: >
+    path={{ backend_path }}
+    state=absent
+- name: Copy backend files in place
+  copy:
+    src: "{{ backend_repo_path }}/backend"
+    dest: "{{ app_path }}"
+
+- name: Start backend server
+  shell: python2 flask_app.py &
+  args:
+    chdir: "{{ backend_path }}"
+  environment:
+    POSTGRES_HOST: localhost
+    POSTGRES_DB: app
+    POSTGRES_USER: user
+    POSTGRES_PWD: password

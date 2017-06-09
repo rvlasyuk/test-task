@@ -1,0 +1,35 @@
+---
+- name: Get frontend repo
+  git:
+    repo: "{{ app_repository }}"
+    dest: "{{ frontend_repo_path }}"
+    version: master
+    accept_hostkey: yes
+  register: app_updated
+
+
+- name: Install npm dependenceis
+  npm: >
+    path={{ frontend_repo_path }}/frontend
+    registry={{ nodejs_npm_registry }}
+  ignore_errors: true
+
+- name: Run npm build
+  command: npm run buld
+  args:
+    chdir: "{{ frontend_repo_path }}/frontend"
+  environment:
+    NODE_ENV: production
+  ignore_errors: true
+
+
+- name: Clean old frontend build directory
+  file: >
+    path="{{ frontend_path }}/build"
+    state=absent
+
+- name: Copy frontend files in place
+  copy:
+    src: "{{ frontend_repo_path }}/frontend/build"
+    dest: "{{ frontend_path }}"
+  ignore_errors: true

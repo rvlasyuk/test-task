@@ -1,0 +1,16 @@
+---
+
+## Install
+- name: Install ppa key
+  apt_key: >
+    id=C7917B12 
+    url=http://keyserver.ubuntu.com:11371/pks/lookup?op=get&search=0xB9316A7BC7917B12 
+    state=present
+- name: Install ppa
+  apt_repository: >
+    repo=ppa:chris-lea/{{ nginx_apt_flavor }} 
+    state=present
+- name: Install package
+  apt: >
+    name=nginx 
+    state={{ nginx_apt_state }}

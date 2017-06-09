@@ -1,0 +1,41 @@
+{% for vhost in test_vhosts_nossl %}
+server {
+    listen {{ vhost.listen | default('80') }};
+
+    {% if vhost.server_name is defined -%}
+    server_name {{ vhost.server_name }};
+    {% endif %}
+
+    gzip on;
+    gzip_comp_level 1;
+    gzip_http_version 1.0;
+    gzip_proxied no-cache no-store private expired auth;
+    gzip_min_length 1100;
+    gzip_buffers 16 8k;
+    gzip_disable "msie6";
+    gzip_types text/plain text/xml application/xml application/xhtml+xml text/javascript text/css application/x-javascript application/javascript;
+
+    root {{ vhost.root | default(frontend_root_dir) }};
+    index {{ vhost.index | default('index.html index.htm') }};
+    underscores_in_headers on;
+
+    #access to status page for monitoring
+    location /server-status {
+        stub_status;
+        allow 127.0.0.1;
+        deny all;
+    }
+
+    location /api {
+        proxy_pass http://test_backend/;
+        proxy_set_header Host $http_host;
+        add_header Pragma "no-cache";
+        add_header Cache-Control "no-cache, no-store, max-age=0";
+    }
+
+    location /app {
+        root {{ frontend_path }}/build;
+    }
+
+}
+{% endfor %}

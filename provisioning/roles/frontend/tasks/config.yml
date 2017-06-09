@@ -1,0 +1,13 @@
+---
+- name: copy nginx configs in place
+  template: >
+    src={{ item }}.j2
+    dest=/etc/nginx/conf.d/{{ item }}
+    owner=root
+    group=root
+    mode=0644
+  with_items:
+    - localhost_80.conf
+    - upstreams.conf
+  notify:
+    - restart nginx
